@@ -4,7 +4,7 @@
   "description": "",
   "main": "server/dist/app.js",
   "scripts": {
-    "start": "ts-node --project server/tsconfig.json server/src/app.ts",
+    "start": "node server/dist/app.js",
     "dev": "nodemon --exec 'ts-node --project server/tsconfig.json' server/src/app.ts",
     "build": "tsc -p server"
   },
