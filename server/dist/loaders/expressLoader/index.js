@@ -39,25 +39,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var path_1 = __importDefault(require("path"));
 var express_1 = __importDefault(require("express"));
-var loaders_1 = __importDefault(require("./loaders"));
-var config_1 = __importDefault(require("./config"));
-function setupServer() {
-    return __awaiter(this, void 0, void 0, function () {
-        var app;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    app = express_1.default();
-                    return [4 /*yield*/, loaders_1.default({ expressApp: app })];
-                case 1:
-                    _a.sent();
-                    app.listen(config_1.default.app.port, function () {
-                        console.log("App running at " + config_1.default.app.url);
-                    });
-                    return [2 /*return*/];
-            }
+var morgan_1 = __importDefault(require("morgan"));
+// import cors from "cors";
+var helmet_1 = __importDefault(require("helmet"));
+var deployments_1 = __importDefault(require("../../api/deployments"));
+var templates_1 = __importDefault(require("../../api/templates"));
+var middlewares_1 = __importDefault(require("./middlewares"));
+exports.default = (function (_a) {
+    var app = _a.app;
+    return __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, function (_b) {
+            // Register middlewares
+            app.use(morgan_1.default('common'));
+            // app.use(cors());
+            app.use(express_1.default.json());
+            app.use(helmet_1.default());
+            app.use('/api/deployments', deployments_1.default);
+            app.use('/api/templates', templates_1.default);
+            app.use(express_1.default.static(path_1.default.join(process.cwd(), 'client', 'build')));
+            app.get('', function (req, res) {
+                res.sendFile(path_1.default.resolve(process.cwd(), 'client', 'build', 'index.html'));
+            });
+            middlewares_1.default({ app: app });
+            return [2 /*return*/];
         });
     });
-}
-setupServer();
+});

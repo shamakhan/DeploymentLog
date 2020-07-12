@@ -39,25 +39,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var express_1 = __importDefault(require("express"));
-var loaders_1 = __importDefault(require("./loaders"));
-var config_1 = __importDefault(require("./config"));
-function setupServer() {
-    return __awaiter(this, void 0, void 0, function () {
-        var app;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    app = express_1.default();
-                    return [4 /*yield*/, loaders_1.default({ expressApp: app })];
-                case 1:
-                    _a.sent();
-                    app.listen(config_1.default.app.port, function () {
-                        console.log("App running at " + config_1.default.app.url);
-                    });
-                    return [2 /*return*/];
-            }
+var deployment_1 = __importDefault(require("../models/deployment"));
+var Deployment = /** @class */ (function () {
+    function Deployment() {
+    }
+    Deployment.prototype.all = function () {
+        return deployment_1.default.find().sort({ deployedAt: -1 });
+    };
+    Deployment.prototype.add = function (payload) {
+        return deployment_1.default.create(payload);
+    };
+    Deployment.prototype.delete = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var deleted;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, deployment_1.default.deleteOne({ _id: id })];
+                    case 1:
+                        deleted = _a.sent();
+                        return [2 /*return*/, deleted.deletedCount];
+                }
+            });
         });
-    });
-}
-setupServer();
+    };
+    return Deployment;
+}());
+exports.default = Deployment;

@@ -40,24 +40,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
-var loaders_1 = __importDefault(require("./loaders"));
-var config_1 = __importDefault(require("./config"));
-function setupServer() {
-    return __awaiter(this, void 0, void 0, function () {
-        var app;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    app = express_1.default();
-                    return [4 /*yield*/, loaders_1.default({ expressApp: app })];
-                case 1:
-                    _a.sent();
-                    app.listen(config_1.default.app.port, function () {
-                        console.log("App running at " + config_1.default.app.url);
-                    });
-                    return [2 /*return*/];
-            }
-        });
+var template_1 = __importDefault(require("../services/template"));
+var router = express_1.default.Router();
+var templateService = new template_1.default();
+router.get('/', function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var templates, err_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, templateService.all()];
+            case 1:
+                templates = _a.sent();
+                res.json({ templates: templates });
+                return [3 /*break*/, 3];
+            case 2:
+                err_1 = _a.sent();
+                console.error(err_1);
+                next(new Error("Failed to fetch templates"));
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
     });
-}
-setupServer();
+}); });
+exports.default = router;

@@ -40,24 +40,73 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
-var loaders_1 = __importDefault(require("./loaders"));
-var config_1 = __importDefault(require("./config"));
-function setupServer() {
-    return __awaiter(this, void 0, void 0, function () {
-        var app;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    app = express_1.default();
-                    return [4 /*yield*/, loaders_1.default({ expressApp: app })];
-                case 1:
-                    _a.sent();
-                    app.listen(config_1.default.app.port, function () {
-                        console.log("App running at " + config_1.default.app.url);
-                    });
-                    return [2 /*return*/];
-            }
-        });
+var deployment_1 = __importDefault(require("../services/deployment"));
+var validators_1 = __importDefault(require("./validators"));
+var router = express_1.default.Router();
+var deploymentService = new deployment_1.default();
+router.get('/', function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var deployments, err_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, deploymentService.all()];
+            case 1:
+                deployments = _a.sent();
+                res.json({ deployments: deployments });
+                return [3 /*break*/, 3];
+            case 2:
+                err_1 = _a.sent();
+                console.error(err_1);
+                next(new Error("Failed to fetch deployments"));
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
     });
-}
-setupServer();
+}); });
+router.post('/', validators_1.default.deployment, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var deployment, err_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, deploymentService.add(req.body)];
+            case 1:
+                deployment = _a.sent();
+                res.json({ status: "SUCCESS", data: deployment });
+                return [3 /*break*/, 3];
+            case 2:
+                err_2 = _a.sent();
+                console.error(err_2);
+                next(new Error("Failed to add deployment"));
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+router.delete('/:id', function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var deleted, err_3;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, deploymentService.delete(req.params.id)];
+            case 1:
+                deleted = _a.sent();
+                if (deleted) {
+                    res.json({ status: "SUCCESS", message: "Deployment deleted" });
+                }
+                else {
+                    res.json({ status: "FAILURE", message: "Deployment doesn't exist" });
+                }
+                return [3 /*break*/, 3];
+            case 2:
+                err_3 = _a.sent();
+                console.log(err_3);
+                next(new Error());
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+exports.default = router;

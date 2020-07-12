@@ -39,25 +39,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var express_1 = __importDefault(require("express"));
-var loaders_1 = __importDefault(require("./loaders"));
-var config_1 = __importDefault(require("./config"));
-function setupServer() {
-    return __awaiter(this, void 0, void 0, function () {
-        var app;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    app = express_1.default();
-                    return [4 /*yield*/, loaders_1.default({ expressApp: app })];
+var expressLoader_1 = __importDefault(require("./expressLoader"));
+var mongooseLoader_1 = __importDefault(require("./mongooseLoader"));
+exports.default = (function (_a) {
+    var expressApp = _a.expressApp;
+    return __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0: return [4 /*yield*/, mongooseLoader_1.default()];
                 case 1:
-                    _a.sent();
-                    app.listen(config_1.default.app.port, function () {
-                        console.log("App running at " + config_1.default.app.url);
-                    });
+                    _b.sent();
+                    console.log("Database connected!");
+                    return [4 /*yield*/, expressLoader_1.default({ app: expressApp })];
+                case 2:
+                    _b.sent();
+                    console.log("Express Initialized");
                     return [2 /*return*/];
             }
         });
     });
-}
-setupServer();
+});
