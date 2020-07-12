@@ -3,7 +3,7 @@ import { IDeploymentInput } from "../interfaces/IDeployment";
 
 export default class Deployment {
   all() {
-    return DeploymentModel.find();
+    return DeploymentModel.find().sort({ deployedAt: -1 });
   }
 
   add(payload: IDeploymentInput) {

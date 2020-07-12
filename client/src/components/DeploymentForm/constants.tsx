@@ -2,7 +2,7 @@ import Validator from 'validatorjs';
 import { IDeploymentInput } from "../../interfaces/IDeployment";
 
 const rules = {
-  url: "required|string",
+  url: "required|string|min:8|url",
   templateName: "required|string",
   version: "required|string"
 };

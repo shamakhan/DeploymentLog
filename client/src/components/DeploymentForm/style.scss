@@ -1,0 +1,25 @@
+.deployment-form {
+  padding: 10px 30px;
+  display: flex;
+
+  form {
+    width: 100%;
+    .template-fields {
+      display: flex;
+  
+      .form-group {
+        width: 50%;
+  
+        &:first-child {
+          margin-right: 20px;
+        }
+      }
+    }
+    
+    button {
+      width: 100px;
+      float: right;
+    }
+  }
+
+}

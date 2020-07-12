@@ -1,4 +1,5 @@
-import { createStore, combineReducers } from "redux";
+import { createStore, combineReducers, applyMiddleware, compose } from "redux";
+import thunk from "redux-thunk";
 import deployments from "./deployments/reducer";
 import templates from "./templates/reducer";
 
@@ -15,7 +16,10 @@ export type RootState = ReturnType<typeof rootReducer>;
 
 const store = createStore(
   rootReducer,
-  window.__REDUX_DEVTOOLS_EXTENSION__ ? window.__REDUX_DEVTOOLS_EXTENSION__() : null
+  compose(
+    applyMiddleware(thunk),
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+  )
 )
 
 export default store;

@@ -1,4 +1,4 @@
 export interface ITemplate {
-  name: String,
+  name: string,
   versions: String[]
 }

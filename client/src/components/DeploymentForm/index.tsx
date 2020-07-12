@@ -1,41 +1,84 @@
-import React, { useState, useRef, FormEvent } from 'react';
+import React, { useState, useRef, FormEvent, useEffect } from 'react';
 import { validate } from "./constants";
 import { toast } from "react-toastify";
+import { Button, Form, FormGroup, Label, Input, Col, FormFeedback } from 'reactstrap';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from "../../store";
+import { API_ROOT } from "../../constants";
+import "./style.scss";
+import { List, Map } from 'immutable';
+import { addingDeployment, deploymentAdded, failedToAddDeployment } from "../../store/deployments/actions";
 
 function DeploymentForm() {
   const [url, setUrl] = useState("");
+  
+  const [templateOptions, setTemplateOptions] = useState<string[]>([]);
   const [templateName, setTemplateName] = useState("");
+  
+  const [versionOptions, setVersionOptions] = useState<string[]>([]);
   const [version, setVersion] = useState("");
+
+  const { templatesLoading, templates } = useSelector((state: RootState) => ({
+    templatesLoading: state.deployments.get('loading'),
+    templates: state.templates.get('list', Map()),
+  }));
+  
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const templateNames = Object.keys((templates || Map()).toJS());
+    setTemplateOptions(() => templateNames);
+    setTemplateName(() => templateNames[0]);
+
+    const availableVersions = templates.get(templateNames[0], List()).toJS();
+    setVersionOptions(() => availableVersions);
+    setVersion(() => availableVersions[0]);
+  }, [templates]);
 
   const urlRef = useRef<HTMLInputElement>(null);
 
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState({ url: "" });
+
+  const resetFields = () => {
+    setUrl("");
+    setTemplateName(templateOptions[0]);
+    setVersion(versionOptions[0]);
+  }
 
   const handleSubmit = async (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
     const formData = { url, templateName, version };
     const validation = validate(formData);
     if (validation.valid) {
-      setErrors(() => {});
-      const response = await fetch("/api/deployments", {
-        method: "POST",
-        headers: {
-          'Content-Type': "application/json"
-        },
-        body: JSON.stringify(formData)
-      });
-      const json = await response.json();
-      if (response.status !== 200) {
-        toast(json.message);
-      } else {
-        if (json.status === "SUCCESS") {
-          console.log(json)
-        } else {
+      setErrors(() => ({ url: "" }));
+      dispatch(addingDeployment());
+      try {
+        const response = await fetch(`${API_ROOT}/api/deployments`, {
+          method: "POST",
+          headers: {
+            'Content-Type': "application/json"
+          },
+          body: JSON.stringify(formData)
+        });
+        const json = await response.json();
+        if (response.status !== 200) {
           toast(json.message);
+        } else {
+          if (json.status === "SUCCESS") {
+            toast("Deployment added successfully!");
+            dispatch(deploymentAdded(json.data));
+            resetFields();
+          } else {
+            toast(json.message);
+            dispatch(failedToAddDeployment());
+          }
         }
+      } catch (e) {
+        dispatch(failedToAddDeployment());
       }
     } else {
-      setErrors(() => validation.errors);
+      // @ts-ignore
+      setErrors(() => validation.errors.errors);
       if (validation.errors && validation.errors.hasOwnProperty('url')) {
         if (urlRef.current !== null) {
           urlRef.current.focus();
@@ -46,37 +89,37 @@ function DeploymentForm() {
 
   return (
     <div className="deployment-form">
-      <form onSubmit={handleSubmit}>
-        <div className="form-control">
-          <label htmlFor="url">URL: </label>
-          <input
-          type="text"
-          ref={urlRef}
-          name="url"
-          value={url}
-          onChange={(evt) => setUrl(evt.target.value)}
-          />
-        </div>
-        <div className="form-control">
-          <label htmlFor="templateName">Template Name: </label>
-          <input
-            type="text"
-            name="templateName"
-            value={templateName}
-            onChange={(evt) => setTemplateName(evt.target.value)}
-          />
-        </div>
-        <div className="form-control">
-          <label htmlFor="version">Version: </label>
-          <input
-            type="text"
-            name="version"
-            value={version}
-            onChange={(evt) => setVersion(evt.target.value)}
-          />
-        </div>
-        <button type="submit">Add</button>
-      </form>
+      <Form onSubmit={handleSubmit}>
+        <FormGroup row>
+          <Label for="url" sm={2}>URL</Label>
+          <Col sm={10}>
+            <Input type="text" invalid={errors && !!errors.url} placeholder="Enter URL" innerRef={urlRef} name="url" value={url} onChange={(evt) => setUrl(evt.target.value)} />
+            <FormFeedback>{errors.url}</FormFeedback>
+          </Col>
+        </FormGroup>
+        <FormGroup row>
+          <Label for="templateName" sm={2}>Template Name</Label>
+          <Col sm={10}>
+            <Input type="select" name="templateName" value={templateName} onChange={(evt) => setTemplateName(evt.target.value)} >
+              {templateOptions.map((template: string) => (
+                <option key={template}>{template}</option>
+              ))}
+            </Input>
+          </Col>
+        </FormGroup>
+        <FormGroup row>
+          <Label for="version" sm={2}>Version</Label>
+          <Col sm={10}>
+            <Input type="select" name="version" value={version} onChange={(evt) => setVersion(evt.target.value)} >
+              {versionOptions.map((version: string) => (
+                <option key={version}>{version}</option>
+              ))}
+            </Input>
+          </Col>
+        </FormGroup>
+        {/* </div> */}
+        <Button type="submit" color="info">Add</Button>
+      </Form>
     </div>
   );
 }

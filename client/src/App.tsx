@@ -3,6 +3,7 @@ import DeploymentForm from "./components/DeploymentForm";
 import DeploymentList from "./components/DeploymentList";
 import Header from "./components/Header";
 import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import { useDispatch } from 'react-redux';
 import { fetchTemplates } from "./store/templates/actions";
 import { fetchDeployments } from "./store/deployments/actions";

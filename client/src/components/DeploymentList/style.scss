@@ -1,0 +1,11 @@
+.deployment-list {
+  padding: 10px 20px;
+
+  .delete-icon {
+    cursor: pointer;
+    fill: #aaa;
+    &:hover {
+      fill: red;
+    }
+  }
+}

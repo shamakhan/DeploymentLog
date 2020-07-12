@@ -9,5 +9,6 @@ export interface IDeployment {
   url: String,
   templateName: String,
   version: String,
+  deployedAt: String,
   _v?: Number
 }

@@ -1,5 +1,5 @@
 import {
-  FETCH_DEPLOYMENTS,
+  FETCHING_DEPLOYMENTS,
   LOAD_DEPLOYMENTS,
   FAILED_TO_FETCH_DEPLOYMENTS,
   ADDING_DEPLOYMENT,
@@ -23,7 +23,7 @@ const initialState: DeploymentState = fromJS({
 
 export default function deploymentReducer(state = initialState, action: DeploymentActionTypes): DeploymentState {
   switch(action.type) {
-    case FETCH_DEPLOYMENTS: {
+    case FETCHING_DEPLOYMENTS: {
       return state.set('loading', true)
         .set('error', "");
     }
@@ -51,7 +51,7 @@ export default function deploymentReducer(state = initialState, action: Deployme
     case DEPLOYMENT_DELETED: {
       const deploymentId = state.get('deletingDeployment');
       return state.set('deletingDeployment', null)
-        .update('list', (deployments) => deployments.filter((deployment: any) => deployment.get('_id') === deploymentId));
+        .update('list', (deployments) => deployments.filter((deployment: any) => deployment.get('_id') !== deploymentId));
     }
     case FAILED_TO_DELETE_DEPLOYMENT: {
       return state.set('deletingDeployment', null);

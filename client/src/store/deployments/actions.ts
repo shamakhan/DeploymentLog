@@ -1,7 +1,12 @@
 import { IDeployment } from "../../interfaces/IDeployment";
+import { ThunkAction } from 'redux-thunk';
+import { Action } from 'redux';
+import { RootState } from "../index";
+import { API_ROOT } from "../../constants";
+import { toast } from "react-toastify";
 
 import {
-  FETCH_DEPLOYMENTS,
+  FETCHING_DEPLOYMENTS,
   LOAD_DEPLOYMENTS,
   FAILED_TO_FETCH_DEPLOYMENTS,
   ADDING_DEPLOYMENT,
@@ -13,9 +18,24 @@ import {
   FAILED_TO_DELETE_DEPLOYMENT
 } from "./types";
 
-export const fetchDeployments = () : DeploymentActionTypes => {
+
+export const fetchDeployments = (): ThunkAction<void, RootState, unknown, Action<string>> => 
+  async (dispatch) => {
+    dispatch(fetchingDeployments());
+    try {
+      const response = await fetch(`${API_ROOT}/api/deployments`);
+      const data = await response.json();
+      dispatch(loadDeployments(data.deployments));
+    } catch (e) {
+      toast(e.message);
+      dispatch(failedFetchingDeployments(e));
+    }
+  };
+
+
+export const fetchingDeployments = () : DeploymentActionTypes => {
   return {
-    type: FETCH_DEPLOYMENTS,
+    type: FETCHING_DEPLOYMENTS,
   }
 };
 
@@ -51,6 +71,23 @@ export const failedToAddDeployment = () : DeploymentActionTypes => {
     type: FAILED_TO_ADD_DEPLOYMENT,
   }
 }
+
+export const deleteDeployment = (id: String): ThunkAction<void, RootState, unknown, Action<string>> => 
+  async (dispatch) => {
+    dispatch(deletingDeployment(id));
+    try {
+      const response = await fetch(`${API_ROOT}/api/deployments/${id}`, { method: "DELETE" });
+      const data = await response.json();
+      if (data.status === "SUCCESS") {
+        dispatch(deploymentDeleted());
+      } else {
+        throw new Error(data.message);
+      }
+    } catch (e) {
+      toast(e.message);
+      dispatch(failedToDeleteDeployment());
+    }
+  };
 
 export const deletingDeployment = (deploymentId: String) : DeploymentActionTypes => {
   return {

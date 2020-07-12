@@ -1,7 +1,7 @@
 import { List, Map } from "immutable"
 import { IDeployment } from "../../interfaces/IDeployment"
 
-export const FETCH_DEPLOYMENTS = "app/deployments/FETCH_DEPLOYMENTS"
+export const FETCHING_DEPLOYMENTS = "app/deployments/FETCHING_DEPLOYMENTS"
 export const LOAD_DEPLOYMENTS = "app/deployments/LOAD_DEPLOYMENTS"
 export const FAILED_TO_FETCH_DEPLOYMENTS =
   "app/deployments/FAILED_TO_FETCH_DEPLOYMENTS"
@@ -16,8 +16,8 @@ export const DEPLOYMENT_DELETED = "app/deployments/DEPLOYMENT_DELETED"
 export const FAILED_TO_DELETE_DEPLOYMENT =
   "app/deployments/FAILED_TO_DELETE_DEPLOYMENT"
 
-interface FetchDeploymentsAction {
-  type: typeof FETCH_DEPLOYMENTS
+interface FetchingDeploymentsAction {
+  type: typeof FETCHING_DEPLOYMENTS
 }
 
 interface LoadDeploymentsAction {
@@ -57,7 +57,7 @@ interface FailedToDeleteDeployment {
 }
 
 export type DeploymentActionTypes =
-  | FetchDeploymentsAction
+  | FetchingDeploymentsAction
   | LoadDeploymentsAction
   | AddingDeployment
   | FailedDeploymentsAction
