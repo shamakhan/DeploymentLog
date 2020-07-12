@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node server/dist/app.js",
     "dev": "nodemon --exec 'ts-node --project server/tsconfig.json' server/src/app.ts",
+    "serve": "cd client && npm run build && cd ../ && node --exec 'ts-node --project server/tsconfig.json' server/src/app.ts",
     "build": "tsc -p server"
   },
   "author": "Shama Khan (shmkhan3@gmail.com)",

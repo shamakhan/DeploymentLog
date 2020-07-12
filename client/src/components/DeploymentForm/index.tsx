@@ -18,9 +18,10 @@ function DeploymentForm() {
   const [versionOptions, setVersionOptions] = useState<string[]>([]);
   const [version, setVersion] = useState("");
 
-  const { templatesLoading, templates } = useSelector((state: RootState) => ({
+  const { templatesLoading, templates, adding } = useSelector((state: RootState) => ({
     templatesLoading: state.deployments.get('loading'),
     templates: state.templates.get('list', Map()),
+    adding: state.deployments.get('adding', false),
   }));
   
   const dispatch = useDispatch();
@@ -118,7 +119,9 @@ function DeploymentForm() {
           </Col>
         </FormGroup>
         {/* </div> */}
-        <Button type="submit" color="info">Add</Button>
+        <Button type="submit" disabled={adding} color="info">
+          {adding ? (<div className="loader"></div>) : "Add"}
+        </Button>
       </Form>
     </div>
   );

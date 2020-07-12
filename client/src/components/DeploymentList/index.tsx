@@ -46,8 +46,7 @@ function DeploymentList() {
 
   return (
     <div className="deployment-list">
-      {loading && <div className="loader"></div>}
-      {!loading && <Table striped bordered>
+      <Table striped bordered>
         <thead>
           <tr>
             <th>URL</th>
@@ -58,7 +57,9 @@ function DeploymentList() {
           </tr>
         </thead>
         <tbody>
-          {list.map((deployment: Map<String, any>) => (<tr key={deployment.get('_id')}>
+          {loading && <tr><td colSpan={5}><div className="loader"></div></td></tr>}
+          {!loading && list.size === 0 && <tr><td colSpan={5} className="text-center">No records found.</td></tr>}
+          {!loading && list.size !== 0 && list.map((deployment: Map<String, any>) => (<tr key={deployment.get('_id')}>
           <td>{deployment.get('url')}</td>
           <td>{deployment.get('templateName')}</td>
           <td>{deployment.get('version')}</td>
@@ -68,14 +69,16 @@ function DeploymentList() {
           </td>
           </tr>))}
         </tbody>
-      </Table>}
+      </Table>
       <Modal isOpen={showDeleteModal} toggle={toggleConfirmation}>
         {/* <ModalHeader toggle={toggleConfirmation}>Modal title</ModalHeader> */}
         <ModalBody>
           Are you sure you want to delete this deployment ?
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" disabled={deletingDeployment} onClick={handleDelete}>Confirm</Button>{' '}
+          <Button color="primary" disabled={deletingDeployment} onClick={handleDelete}>
+            {deletingDeployment ? (<div className="loader"></div>) : "Confirm"}
+          </Button>{' '}
           <Button color="secondary" disabled={deletingDeployment} onClick={toggleConfirmation}>Cancel</Button>
         </ModalFooter>
       </Modal>
