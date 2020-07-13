@@ -70,7 +70,7 @@ function DeploymentList() {
           </tr>))}
         </tbody>
       </Table>
-      <Modal isOpen={showDeleteModal} toggle={toggleConfirmation}>
+      <Modal isOpen={showDeleteModal} toggle={toggleConfirmation} centered>
         {/* <ModalHeader toggle={toggleConfirmation}>Modal title</ModalHeader> */}
         <ModalBody>
           Are you sure you want to delete this deployment ?

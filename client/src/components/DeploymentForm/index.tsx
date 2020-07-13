@@ -30,11 +30,13 @@ function DeploymentForm() {
     const templateNames = Object.keys((templates || Map()).toJS());
     setTemplateOptions(() => templateNames);
     setTemplateName(() => templateNames[0]);
+  }, [templates]);
 
-    const availableVersions = templates.get(templateNames[0], List()).toJS();
+  useEffect(() => {
+    const availableVersions = templates.get(templateName, List()).toJS();
     setVersionOptions(() => availableVersions);
     setVersion(() => availableVersions[0]);
-  }, [templates]);
+  }, [templateName])
 
   const urlRef = useRef<HTMLInputElement>(null);
 
