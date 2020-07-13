@@ -45,7 +45,7 @@ function DeploymentList() {
   }
 
   return (
-    <div className="deployment-list">
+    <div className="deployment-list col-lg-9">
       <Table striped bordered>
         <thead>
           <tr>
